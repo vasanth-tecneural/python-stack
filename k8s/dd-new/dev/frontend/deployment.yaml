@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-stack-frontend
+  namespace: dd-new
+  labels:
+    app.kubernetes.io/name: python-stack-frontend
+    app.kubernetes.io/managed-by: deepagent
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: python-stack-frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "false"
+        instrumentation.opentelemetry.io/inject-nodejs: "false"
+        instrumentation.opentelemetry.io/inject-python: "false"
+        instrumentation.opentelemetry.io/inject-dotnet: "false"
+      labels:
+        app.kubernetes.io/name: python-stack-frontend
+        app.kubernetes.io/managed-by: deepagent
+    spec:
+      containers:
+        - name: python-stack-frontend
+          image: 411232894985.dkr.ecr.us-east-1.amazonaws.com/python-stack-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          # WARNING: no /health-style route was detected on this service, so
+          # probes are TCP-only. A TCP-only probe passes as soon as the socket
+          # accepts, even if the app returns 500 to every request. Add a
+          # /health endpoint returning 200 and set probePath in deepagent.yaml
+          # to upgrade these probes to httpGet.
+          startupProbe:
+            tcpSocket:
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            failureThreshold: 5
+            timeoutSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: db-ca-bundle
+              mountPath: /etc/deepagent/db-ca
+              readOnly: true
+          envFrom:
+            - secretRef:
+                name: app-db
+                optional: true
+            - secretRef:
+                name: app-cache
+                optional: true
+            - secretRef:
+                name: app-queue
+                optional: true
+            - secretRef:
+                name: app-env
+                optional: true
+            - secretRef:
+                name: app-env-frontend
+                optional: true
+          env:
+            - name: PORT
+              value: "8080"
+            - name: SESSION_COOKIE_SECURE
+              value: "false"
+            - name: BACKEND_URL
+              value: http://backend.dd-new.svc.cluster.local
+            - name: NODE_EXTRA_CA_CERTS
+              value: /etc/deepagent/db-ca/ca-bundle.pem
+      volumes:
+        - name: db-ca-bundle
+          configMap:
+            name: db-ca-bundle
+            optional: true
