@@ -1,0 +1,63 @@
+{
+  "kind": "eks",
+  "spec": {
+    "region": "us-east-1",
+    "kubernetesVersion": "1.36",
+    "instanceType": "m5.large",
+    "desiredNodes": 4,
+    "minNodes": 2,
+    "maxNodes": 6,
+    "endpointPublic": true,
+    "environment": "production",
+    "team": "devops",
+    "costCenter": "",
+    "publicAccessCidrs": "0.0.0.0/0",
+    "controlPlaneLogs": true,
+    "secretsEncryption": false,
+    "systemDiskSize": 100,
+    "ebsCsi": true,
+    "capacityType": "ON_DEMAND",
+    "appNodeGroup": false,
+    "appInstanceTypes": [
+      "m5.large",
+      "m5.xlarge"
+    ],
+    "appCapacityType": "SPOT",
+    "appMinNodes": 2,
+    "appMaxNodes": 20,
+    "appDesiredNodes": 3,
+    "name": "dd-new-dev",
+    "linuxFamily": "al2023",
+    "maxPodsPerInstanceType": {
+      "m5.large": 110
+    },
+    "createVpc": false,
+    "existingVpcId": "vpc-056643ac7ad2fa34b",
+    "existingSubnetIds": [
+      "subnet-0980dcf0c89fb764b",
+      "subnet-078ad3e23ba3b172d",
+      "subnet-062463e4644d75abd",
+      "subnet-067cf8a2929ddd209",
+      "subnet-0b25baac4a3bc1892",
+      "subnet-0487cb37c0d2c8828"
+    ],
+    "nodeSubnetIds": [
+      "subnet-0980dcf0c89fb764b",
+      "subnet-067cf8a2929ddd209",
+      "subnet-0487cb37c0d2c8828"
+    ],
+    "clusterSubnetClass": "both",
+    "nodeSubnetClass": "private",
+    "accessEntries": [
+      {
+        "principalArn": "arn:aws:iam::411232894985:root",
+        "policy": "AmazonEKSClusterAdminPolicy"
+      }
+    ],
+    "vpcCidr": "10.30.0.0/16",
+    "publicSubnetCount": 3,
+    "privateSubnetCount": 3,
+    "singleNatGateway": true,
+    "installAlbController": false
+  }
+}
