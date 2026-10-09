@@ -1,0 +1,31 @@
+{
+  "kind": "rds",
+  "spec": {
+    "allocatedStorage": 20,
+    "maxAllocatedStorage": 200,
+    "backupRetentionDays": 7,
+    "multiAz": false,
+    "skipFinalSnapshot": false,
+    "dbUsername": "app",
+    "storageType": "gp3",
+    "storageEncrypted": true,
+    "iamDatabaseAuthentication": false,
+    "performanceInsights": false,
+    "performanceInsightsRetention": 7,
+    "monitoringInterval": 0,
+    "backupWindow": "03:00-04:00",
+    "maintenanceWindow": "sun:04:30-sun:05:30",
+    "autoMinorVersionUpgrade": true,
+    "deletionProtection": true,
+    "publiclyAccessible": false,
+    "name": "dd-new-dev-db",
+    "region": "us-east-1",
+    "engine": "postgres",
+    "engineVersion": "18.3",
+    "instanceClass": "db.t4g.micro",
+    "eksClusterName": "dd-new-dev",
+    "env": "dev",
+    "initialDbName": "app",
+    "masterPasswordOverride": ""
+  }
+}
