@@ -10,6 +10,7 @@ COPY . .
 # (no-op when the package.json defines none).
 RUN npm run postinstall --if-present
 RUN npm run build
+RUN if [ ! -d /app/dist ] && [ -d /backend/app/frontend ]; then cp -r /backend/app/frontend /app/dist; fi
 
 # --- Runtime: unprivileged nginx (already non-root uid 101, listens on 8080) ---
 FROM nginxinc/nginx-unprivileged:1.27-alpine
